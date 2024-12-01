@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using MelonLoader;
 using HarmonyLib;
+using MelonLoader;
+using Mirror;
 using UnityEngine;
-using static MelonLoader.MelonLogger;
 
 namespace Uncapped_Players_And_Parties
 {
@@ -24,20 +20,10 @@ namespace Uncapped_Players_And_Parties
             {
                 if (partyPre == null)
                 {
-                    foreach (GameObject go in Resources.FindObjectsOfTypeAll(typeof(GameObject)) as GameObject[])
+                    foreach (PartyObjectBehavior go in Resources.FindObjectsOfTypeAll(typeof(PartyObjectBehavior)) as PartyObjectBehavior[])
                     {
-                        if (go.name == "_entity_partyObject")
-                        {
-                            partyPre = go.GetComponent<PartyObjectBehavior>();
-                            //MelonLogger.Msg(go.name);
-                            //MelonLogger.Msg(partyPre.Network_maxPartyLimit);
-                            partyPre.Network_maxPartyLimit = 1000;
-                            //MelonLogger.Msg(partyPre.Network_maxPartyLimit);
-                            //MelonLogger.Msg(partyPre._maxPartyLimit);
-                            partyPre._maxPartyLimit = 1000;
-                            //MelonLogger.Msg(partyPre._maxPartyLimit);
-                            break;
-                        }
+                        go.Network_maxPartyLimit = 1000;
+                        go._maxPartyLimit = 1000;
                     }
                 }
             }
@@ -54,9 +40,8 @@ namespace Uncapped_Players_And_Parties
             {
                 try
                 {
-                    //MelonLogger.Msg(__instance.maxConnections);
-                    __instance.maxConnections = 500;
-                    //MelonLogger.Msg(__instance.maxConnections);
+                    __instance.maxConnections = 1000;
+                    NetworkServer.maxConnections = 1000;
                 }
                 catch (Exception e)
                 {
@@ -64,5 +49,21 @@ namespace Uncapped_Players_And_Parties
                 }
             }
         }
+
+        /*[HarmonyPatch(typeof(NetworkServer), "Listen")]
+        public static class uncapPlayers2
+        {
+            private static void Prefix(ref int maxConns)
+            {
+                try
+                {
+                    maxConns = 500;
+                }
+                catch (Exception obj)
+                {
+                    MelonLogger.Msg(obj);
+                }
+            }
+        }*/
     }
 }
